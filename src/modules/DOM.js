@@ -6,6 +6,6 @@ export const handleDOM = (() => {
 
         container.prepend(card);        
     }
-
+    
     return { createProject }
 })();
