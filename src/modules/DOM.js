@@ -1,36 +1,27 @@
-export const handleDOM = (() => {
-    const createDefualt = () => {
-        const container = document.getElementById("project-container");
+const FormHandler = {
+    getInputValue(formElement, inputName) {
+        if(!formElement) { return "Error: Form element not be found." };
+        const formData = new FormData(formElement);
+        const data = Object.fromEntries(formData);
+
+        return data[inputName] || "";
+    }
+}
+
+const DOMRenderer = {
+    createProjectCard(containerID, textContent, options = {}) {
+        const container = document.getElementById(containerID);
+        if(!container) { return "Error: Container not found" };
+
         const card = document.createElement("div");
-        card.classList.add("project");
+        card.classList.add(options.className || "project");
 
         const text = document.createElement("h3");
-        text.textContent = "Default";
-        card.appendChild(text);
+        text.textContent = textContent;
 
+        card.appendChild(text);
         container.prepend(card);
     }
+}
 
-    const createProject = () => {
-        const container = document.getElementById("project-container");
-        const card = document.createElement("div");
-        card.classList.add("project");
-
-        const projectName = getProjectName();
-        const text = document.createElement("h3");
-        text.textContent = projectName;
-        card.appendChild(text);
-
-        container.prepend(card);        
-    }
-
-    const getProjectName = () => {
-        const form = document.getElementById("project-form");
-        const formData = new FormData(form);
-        const name = Object.fromEntries(formData);
-
-        return name['project-name'];
-    }
-
-    return { createDefualt, createProject }
-})();
+export { FormHandler, DOMRenderer }

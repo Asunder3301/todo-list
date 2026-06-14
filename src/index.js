@@ -1,15 +1,18 @@
 import "./styles.css";
 import "./modern-normalize.css";
-import { handleDOM } from "./modules/DOM.js";
+import { FormHandler, DOMRenderer } from "./modules/DOM.js";
 
-handleDOM.createDefualt();
+DOMRenderer.createProjectCard("project-container", "Defualt");
 
 const form = document.getElementById("project-form");
 const dialog = document.getElementById("create-project");
 
 form.addEventListener("submit", (event) => {
     event.preventDefault();
-    handleDOM.createProject();
+    
+    const name = FormHandler.getInputValue(form, "project-name");
+    DOMRenderer.createProjectCard("project-container", name);
+    
     form.reset();
     dialog.close();
 });
