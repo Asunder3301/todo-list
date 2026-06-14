@@ -5,7 +5,7 @@
     --secondary-text: #b3b3b3;
 }
 
-h1, h2 { margin: 0; color: var(--main-text); }
+h1, h2, h3, input, #project-form, #submit-button { margin: 0; color: var(--main-text); }
 button { border: none; padding: 0; }
 
 body {
@@ -35,6 +35,9 @@ main {
 }
 
 .project {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: auto;
     border-radius: 10px;
     min-height: 200px;
@@ -42,6 +45,8 @@ main {
     max-width: 300px;
     background-color: var(--secondary-color);
 }
+
+h3 { font-size: clamp(1rem, 2.5vw, 1.5rem); }
 
 #add-btn {
     margin: auto 0 auto !important;
@@ -62,7 +67,6 @@ dialog { border-radius: 0.5rem; background-color: var(--main-color); }
 #project-form {
     display: grid;
     gap: 1rem;
-    color: var(--main-text);
 }
 
 .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -75,7 +79,6 @@ input {
     height: 1.5rem;
     min-width: 1.75rem;
     width: 100%;
-    color: var(--main-text);
     background-color: var(--secondary-color); 
 }
 
@@ -88,6 +91,5 @@ input {
     justify-self: center;
     font-size: clamp(0.5rem, 1.2vw, 1rem);
     background-color: var(--secondary-color);
-    color: var(--main-text);
 }
 
