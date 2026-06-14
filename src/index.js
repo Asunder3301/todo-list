@@ -2,7 +2,14 @@ import "./styles.css";
 import "./modern-normalize.css";
 import { handleDOM } from "./modules/DOM.js";
 
-handleDOM.createProject();
+handleDOM.createDefualt();
 
-const button = document.getElementById("add-btn");
-button.addEventListener("click", handleDOM.createProject);
+const form = document.getElementById("project-form");
+const dialog = document.getElementById("create-project");
+
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    handleDOM.createProject();
+    form.reset();
+    dialog.close();
+});
