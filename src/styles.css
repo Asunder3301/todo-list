@@ -5,7 +5,7 @@
     --secondary-text: #b3b3b3;
 }
 
-h1, h2, h3, input, #project-form, #submit-btn { margin: 0; color: var(--main-text); }
+h1, h2, h3, input, textarea, select #project-form, #submit-btn, #todo-form, #todo-submit { margin: 0; color: var(--main-text); }
 button { border: none; padding: 0; }
 
 body {
@@ -55,34 +55,44 @@ h3 { font-size: clamp(1rem, 2.5vw, 1.5rem); }
     width: 50px;  
 }
 
-dialog { border-radius: 0.5rem; background-color: var(--main-color); }
-::backdrop { background-color: rgba(0, 0, 0, 0.75); }
-
-#create-project { 
-    height: min-content; 
-    width: 100%; 
-    max-width: 15vw; 
+#add-todo { 
+    margin: 0 auto;
+    border-radius: 25px;
+    height: 35px;
+    width: 35px;  
 }
 
-#project-form {
+dialog { border-radius: 0.5rem; background-color: var(--main-color); }
+::backdrop { background-color: rgba(0, 0, 0, 0.75); }
+#create-project, .dynamic-dialog { height: min-content; width: 100%; }
+#create-project { max-width: 15vw; }
+.dynamic-dialog { max-width: 30vw; }
+
+#project-form, #todo-form {
     display: grid;
     gap: 1rem;
 }
 
+#todo-title { justify-self: center; }
 .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
 label { font-size: clamp(0.7rem, 2vw, 1rem); text-box-trim: trim-both; text-box-edge: cap; }
 
-input { 
+input, textarea, select { 
     border: none; 
     border-radius: 0.5rem;
+    background-color: var(--secondary-color); 
+}
+
+textarea { padding: 0.25rem; resize: none; }
+
+input, select {
     padding: 0 0 0 5px;
     height: 1.5rem;
     min-width: 1.75rem;
     width: 100%;
-    background-color: var(--secondary-color); 
 }
 
-#submit-btn {
+#submit-btn, #todo-submit {
     border-radius: 0.6rem;
     height: 2rem;
     width: 35%;
@@ -92,4 +102,5 @@ input {
     font-size: clamp(0.5rem, 1.2vw, 1rem);
     background-color: var(--secondary-color);
 }
+
 
