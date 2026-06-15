@@ -5,7 +5,7 @@
     --secondary-text: #b3b3b3;
 }
 
-h1, h2, h3, input, #project-form, #submit-button { margin: 0; color: var(--main-text); }
+h1, h2, h3, input, #project-form, #submit-btn { margin: 0; color: var(--main-text); }
 button { border: none; padding: 0; }
 
 body {
