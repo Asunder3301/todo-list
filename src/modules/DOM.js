@@ -1,4 +1,4 @@
-const FormHandler = {
+const DOMHandler = {
     getInputValue(formElement, inputName) {
         if(!formElement) { return "Error: Form element not be found." };
         const formData = new FormData(formElement);
@@ -13,15 +13,27 @@ const DOMRenderer = {
         const container = document.getElementById(containerID);
         if(!container) { return "Error: Container not found" };
 
-        const card = document.createElement("div");
-        card.classList.add(options.className || "project");
+        const projectCard = document.createElement("div");
+        projectCard.classList.add(options.className || "project");
+        projectCard.id = crypto.randomUUID();
+
+        AddListeners.addProjectListner(projectCard);
 
         const text = document.createElement("h3");
         text.textContent = textContent;
 
-        card.appendChild(text);
-        container.prepend(card);
+        projectCard.appendChild(text);
+        container.prepend(projectCard);
     }
 }
 
-export { FormHandler, DOMRenderer }
+const AddListeners = {
+    addProjectListner(element) {
+        if (!element) { return "Error: Element not found."};
+        element.addEventListener("click", () => {
+            alert(`Clicked: ${element.id}`);
+        })
+    }
+}
+
+export { DOMHandler, DOMRenderer }
