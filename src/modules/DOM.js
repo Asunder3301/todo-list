@@ -1,3 +1,4 @@
+import { Todo } from './todo.js';
 import svgString from '../assets/plus-icon.svg';
 
 const DOMHandler = {
@@ -6,6 +7,35 @@ const DOMHandler = {
     const formData = new FormData(formElement);
     const data = Object.fromEntries(formData);
     return data[inputName] || "";
+  },
+
+  getTodoFormInfo(formElement) {
+    if(!formElement) return new Error("Form not found.");
+    const formData = new FormData(formElement);
+    const data = Object.fromEntries(formData);
+    const todos = [];
+
+    //Iterates through each todo and creates an array of todo objects
+    Object.keys(data).forEach(key => {
+      const match = key.match(/^todos\[(\d+)\]\[(.+)\]$/);
+      if (match) {
+        const index = parseInt(match[1], 10);
+        const field = match[2];
+
+        if(!todos[index]) {
+          todos[index] = {};
+        }
+        todos[index][field] = data[key];
+      }
+    })
+
+    DOMHandler.iterateTodos(todos);
+  },
+
+  iterateTodos(todoArray) {
+    todoArray.forEach(todoItem => {
+      createObjects.createTodoObjects(todoItem.title, todoItem.description, todoItem['due-date'], todoItem.priority);
+    })
   }
 };
 
@@ -66,6 +96,7 @@ const DOMRenderer = {
     submit.id = "todo-submit";
     submit.type = "submit";
     submit.textContent = "Submit";
+    submit.addEventListener("click", () => { handleDialog.closeAndRemove(dialog); DOMHandler.getTodoFormInfo(form); });
     buttonContainer.appendChild(submit);
 
     form.appendChild(buttonContainer);
@@ -173,6 +204,12 @@ const AddListeners = {
     });
   }
 };
+
+const createObjects = {
+  createTodoObjects(title, description, dueDate, priority) {
+    const todo = new Todo(title, description, dueDate, priority);
+  }
+}
 
 const handleDialog = {
   closeAndRemove(element) {

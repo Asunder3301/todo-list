@@ -1,11 +1,8 @@
 export class Todo {
-    constructor(title, description, dueDate,
-        priority, notes, checklist) {
+    constructor(title, description, dueDate, priority) {
             this.title = title;
             this.description = description;
             this.dueDate = dueDate;
-            this.priority = Number(priority);
-            this.notes = notes;
-            this.checklist = Boolean(checklist);
+            this.priority = priority;
     }
 }
