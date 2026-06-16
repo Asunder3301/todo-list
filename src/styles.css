@@ -77,7 +77,7 @@ dialog { border-radius: 0.5rem; background-color: var(--main-color); }
 fieldset, .form-group, #todo-blocks-container { display: flex; flex-direction: column; }
 #todo-blocks-container { gap: 1rem; }
 fieldset { gap: 0.65rem; }
-label { font-size: clamp(0.7rem, 2vw, 1rem); text-box-trim: trim-both; text-box-edge: cap; }
+label { font-size: clamp(0.7rem, 2vw, 1rem); text-box-trim: trim-both; text-box-edge: cap; color: var(--main-text);}
 
 input, textarea, select { 
     border: none; 
@@ -106,5 +106,31 @@ input, select {
     font-size: clamp(0.5rem, 1.2vw, 1rem);
     background-color: var(--secondary-color);
 }
+
+dialog {
+  scrollbar-color: #333333 #1a1a1a;
+  scrollbar-width: thin;
+}
+
+dialog::-webkit-scrollbar {
+  width: 10px;
+}
+
+dialog::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 8px;
+}
+
+dialog::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 8px;
+  border: 2px solid #1a1a1a;
+  transition: background 0.3s ease;
+}
+
+dialog::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
 
 
