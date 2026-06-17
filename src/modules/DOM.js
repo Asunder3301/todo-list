@@ -1,73 +1,27 @@
-import { Todo } from './todo.js';
 import svgString from '../assets/plus-icon.svg';
+import { FormParser } from './formParser.js';
+import { TodoFactory } from './todoFactory.js';
 
-const DOMHandler = {
-  getInputValue(formElement, inputName) {
-    if (!formElement) return new Error("Form element not found.");
-    const formData = new FormData(formElement);
-    const data = Object.fromEntries(formData);
-    return data[inputName] || "";
-  },
-
-  getTodoFormInfo(formElement, projectInstance) {
-    if(!formElement) return new Error("Form not found.");
-    const formData = new FormData(formElement);
-    const data = Object.fromEntries(formData);
-    const todos = [];
-
-    Object.keys(data).forEach(key => {
-      const match = key.match(/^todos\[(\d+)\]\[(.+)\]$/);
-      if (match) {
-        const index = parseInt(match[1], 10);
-        const field = match[2];
-
-        if(!todos[index]) {
-          todos[index] = {};
-        }
-        todos[index][field] = data[key];
-      }
-    });
-
-    const cleanedTodos = todos.filter(item => item !== undefined);
-    
-    DOMHandler.iterateTodos(cleanedTodos, projectInstance);
-  },
-
-  iterateTodos(todoArray, projectInstance) {
-    todoArray.forEach(todoItem => {
-      const todoObj = createObjects.createTodoObjects(
-        todoItem.title, 
-        todoItem.description, 
-        todoItem['due-date'], 
-        todoItem.priority
-      );
-      
-      if (projectInstance && typeof projectInstance.pushTodo === 'function') {
-        projectInstance.pushTodo(todoObj);
-      }
-    });
-    console.log(projectInstance);
-  }
-};
-
-const DOMRenderer = {
-  createProjectCard(containerID, textContent, options = {}) {
+class ProjectCardRenderer {
+  static render(containerID, textContent, projectInstance, options = {}) {
     const container = document.getElementById(containerID);
-    if (!container) return new Error("Container not found");
+    if (!container) throw new Error("Container not found");
 
     const projectCard = document.createElement("div");
     projectCard.classList.add(options.className || "project");
     projectCard.id = crypto.randomUUID();
 
-    AddListeners.addProjectListner(projectCard, options.projectInstance);
+    EventBinder.bindProjectClick(projectCard, projectInstance);
 
     const text = document.createElement("h3");
     text.textContent = textContent;
     projectCard.appendChild(text);
     container.prepend(projectCard);
-  },
+  }
+}
 
-  createProjectDialog(projectInstance) {
+class TodoDialogRenderer {
+  static render(projectInstance) {
     const dialog = document.createElement("dialog");
     dialog.classList.add("dynamic-dialog");
 
@@ -86,46 +40,30 @@ const DOMRenderer = {
     const buttonContainer = document.createElement("div");
     buttonContainer.id = "button-container";
 
-    const addTodo = document.createElement("button");
-    addTodo.id = "add-todo";
-    addTodo.type = "button"; 
+    const addTodoBtn = this.#createAddButton(todoBlocksContainer);
+    buttonContainer.appendChild(addTodoBtn);
 
-    const svg = document.createElement("img");
-    svg.src = svgString;
-    svg.width = 20;
-    svg.height = 20;
-    addTodo.appendChild(svg);
+    const submitBtn = this.#createSubmitButton();
+    buttonContainer.appendChild(submitBtn);
 
-    AddListeners.addTodoListener(addTodo, todoBlocksContainer);
-    buttonContainer.appendChild(addTodo);
-
-    buttonContainer.appendChild(addTodo);
-
-    const submit = document.createElement("button");
-    submit.id = "todo-submit";
-    submit.type = "submit";
-    submit.textContent = "Submit";
-    
-    form.addEventListener("submit", (e) => {
-      e.preventDefault(); 
-      DOMHandler.getTodoFormInfo(form, projectInstance);
-      handleDialog.closeAndRemove(dialog);
-    });
-    
-    buttonContainer.appendChild(submit);
     form.appendChild(buttonContainer);
     dialog.appendChild(title);
     dialog.appendChild(form);
     
+    form.addEventListener("submit", (e) => {
+      e.preventDefault(); 
+      this.#handleFormSubmission(form, projectInstance);
+      this.#closeAndRemove(dialog);
+    });
+
     document.body.appendChild(dialog);
     dialog.showModal();
 
-    DOMRenderer.createTodoField(todoBlocksContainer);
-  },
+    this.renderTodoFieldset(todoBlocksContainer);
+  }
 
-  createTodoField(container) {
+  static renderTodoFieldset(container) {
     const index = container.children.length;
-
     const fieldset = document.createElement("fieldset");
     fieldset.classList.add("todo-form-block");
 
@@ -133,104 +71,140 @@ const DOMRenderer = {
     legend.textContent = `Todo #${index + 1}`;
     fieldset.appendChild(legend);
 
-    // Title Field
-    const titleGroup = document.createElement("div");
-    titleGroup.classList.add("form-group");
-    const titleLabel = document.createElement("label");
-    titleLabel.textContent = "Title ";
-    titleLabel.htmlFor = `title-${index}`;
-    titleGroup.appendChild(titleLabel);
-    const titleInput = document.createElement("input");
-    titleInput.type = "text";
-    titleInput.required = true;
-    titleInput.id = `title-${index}`;
-    titleInput.name = `todos[${index}][title]`;
-    titleGroup.appendChild(titleInput);
-    fieldset.appendChild(titleGroup);
-
-    // Description Field
-    const descGroup = document.createElement("div");
-    descGroup.classList.add("form-group");
-    const descLabel = document.createElement("label");
-    descLabel.textContent = "Description ";
-    descLabel.htmlFor = `description-${index}`;
-    descGroup.appendChild(descLabel);
-    const descInput = document.createElement("textarea");
-    descInput.rows = 3;
-    descInput.id = `description-${index}`;
-    descInput.name = `todos[${index}][description]`;
-    descGroup.appendChild(descInput);
-    fieldset.appendChild(descGroup);
-
-    // Date Field
-    const dateGroup = document.createElement("div");
-    dateGroup.classList.add("form-group");
-    const dateLabel = document.createElement("label");
-    dateLabel.textContent = "Due Date ";
-    dateLabel.htmlFor = `due-date-${index}`;
-    dateGroup.appendChild(dateLabel);
-    const dateInput = document.createElement("input");
-    dateInput.type = "date";
-    dateInput.required = true;
-    dateInput.id = `due-date-${index}`;
-    dateInput.name = `todos[${index}][due-date]`;
-    dateGroup.appendChild(dateInput);
-    fieldset.appendChild(dateGroup);
-
-    // Priority Field
-    const priorityGroup = document.createElement("div");
-    priorityGroup.classList.add("form-group");
-    const priorityLabel = document.createElement("label");
-    priorityLabel.textContent = "Priority ";
-    priorityLabel.htmlFor = `priority-${index}`;
-    priorityGroup.appendChild(priorityLabel);
-    const dropdown = document.createElement("select");
-    dropdown.required = true;
-    dropdown.id = `priority-${index}`;
-    dropdown.name = `todos[${index}][priority]`;
-    
-    // Quick boilerplate options for select
-    ["Low", "Medium", "High"].forEach(level => {
-      const opt = document.createElement("option");
-      opt.value = level.toLowerCase();
-      opt.textContent = level;
-      dropdown.appendChild(opt);
-    });
-
-    priorityGroup.appendChild(dropdown);
-    fieldset.appendChild(priorityGroup);
+    fieldset.appendChild(this.#createInputField("Title ", "text", `title-${index}`, `todos[${index}][title]`, true));
+    fieldset.appendChild(this.#createTextAreaField("Description ", `description-${index}`, `todos[${index}][description]`));
+    fieldset.appendChild(this.#createInputField("Due Date ", "date", `due-date-${index}`, `todos[${index}][due-date]`, true));
+    fieldset.appendChild(this.#createSelectField("Priority ", `priority-${index}`, `todos[${index}][priority]`, ["Low", "Medium", "High"]));
 
     container.appendChild(fieldset);
   }
-};
 
-const AddListeners = {
-  addProjectListner(element, projectInstance) {
-    if (!element) return new Error("Element not found.");
-    element.addEventListener("click", () => {
-      DOMRenderer.createProjectDialog(projectInstance);
+  static #handleFormSubmission(form, projectInstance) {
+    const rawTodos = FormParser.extractTodoList(form);
+    
+    rawTodos.forEach(todoData => {
+      const todoObj = TodoFactory.createFromData(todoData);
+      if (projectInstance && typeof projectInstance.pushTodo === 'function') {
+        projectInstance.pushTodo(todoObj);
+      }
     });
-  },
 
-  addTodoListener(element, targetContainer) {
-    if (!element) return new Error("Element not found.");
-    element.addEventListener("click", () => {
-      DOMRenderer.createTodoField(targetContainer);
-    });
+    console.log(projectInstance);
   }
-};
 
-const createObjects = {
-  createTodoObjects(title, description, dueDate, priority) {
-    return new Todo(title, description, dueDate, priority);
-  },
-};
+  static #createAddButton(targetContainer) {
+    const btn = document.createElement("button");
+    btn.id = "add-todo";
+    btn.type = "button"; 
 
-const handleDialog = {
-  closeAndRemove(element) {
+    const svg = document.createElement("img");
+    svg.src = svgString;
+    svg.width = 20;
+    svg.height = 20;
+    btn.appendChild(svg);
+
+    EventBinder.bindAddBlockClick(btn, targetContainer, () => this.renderTodoFieldset(targetContainer));
+    return btn;
+  }
+
+  static #createSubmitButton() {
+    const btn = document.createElement("button");
+    btn.id = "todo-submit";
+    btn.type = "submit";
+    btn.textContent = "Submit";
+    return btn;
+  }
+
+  static #createInputField(labelText, type, id, name, isRequired = false) {
+    const group = document.createElement("div");
+    group.classList.add("form-group");
+    
+    const label = document.createElement("label");
+    label.textContent = labelText;
+    label.htmlFor = id;
+    
+    const input = document.createElement("input");
+    input.type = type;
+    input.id = id;
+    input.name = name;
+    input.required = isRequired;
+
+    group.appendChild(label);
+    group.appendChild(input);
+    return group;
+  }
+
+  static #createTextAreaField(labelText, id, name) {
+    const group = document.createElement("div");
+    group.classList.add("form-group");
+
+    const label = document.createElement("label");
+    label.textContent = labelText;
+    label.htmlFor = id;
+
+    const textarea = document.createElement("textarea");
+    textarea.rows = 3;
+    textarea.id = id;
+    textarea.name = name;
+
+    group.appendChild(label);
+    group.appendChild(textarea);
+    return group;
+  }
+
+  static #createSelectField(labelText, id, name, optionsArray) {
+    const group = document.createElement("div");
+    group.classList.add("form-group");
+
+    const label = document.createElement("label");
+    label.textContent = labelText;
+    label.htmlFor = id;
+
+    const select = document.createElement("select");
+    select.required = true;
+    select.id = id;
+    select.name = name;
+
+    optionsArray.forEach(level => {
+      const opt = document.createElement("option");
+      opt.value = level.toLowerCase();
+      opt.textContent = level;
+      select.appendChild(opt);
+    });
+
+    group.appendChild(label);
+    group.appendChild(select);
+    return group;
+  }
+
+  static #closeAndRemove(element) {
     element.close();
     element.remove();
   }
+}
+
+class EventBinder {
+  static bindProjectClick(element, projectInstance) {
+    if (!element) throw new Error("Target element missing.");
+    element.addEventListener("click", () => {
+      TodoDialogRenderer.render(projectInstance);
+    });
+  }
+
+  static bindAddBlockClick(element, targetContainer, actionCallback) {
+    if (!element) throw new Error("Target element missing.");
+    element.addEventListener("click", actionCallback);
+  }
+}
+
+const DOMHandler = {
+  getInputValue: FormParser.getInputValue,
+};
+
+const DOMRenderer = {
+  createProjectCard: ProjectCardRenderer.render.bind(ProjectCardRenderer),
+  createProjectDialog: TodoDialogRenderer.render.bind(TodoDialogRenderer),
+  createTodoField: TodoDialogRenderer.renderTodoFieldset.bind(TodoDialogRenderer)
 };
 
 export { DOMHandler, DOMRenderer };
