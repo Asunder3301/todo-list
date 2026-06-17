@@ -9,13 +9,12 @@ const DOMHandler = {
     return data[inputName] || "";
   },
 
-  getTodoFormInfo(formElement) {
+  getTodoFormInfo(formElement, projectInstance) {
     if(!formElement) return new Error("Form not found.");
     const formData = new FormData(formElement);
     const data = Object.fromEntries(formData);
     const todos = [];
 
-    //Iterates through each todo and creates an array of todo objects
     Object.keys(data).forEach(key => {
       const match = key.match(/^todos\[(\d+)\]\[(.+)\]$/);
       if (match) {
@@ -27,15 +26,27 @@ const DOMHandler = {
         }
         todos[index][field] = data[key];
       }
-    })
+    });
 
-    DOMHandler.iterateTodos(todos);
+    const cleanedTodos = todos.filter(item => item !== undefined);
+    
+    DOMHandler.iterateTodos(cleanedTodos, projectInstance);
   },
 
-  iterateTodos(todoArray) {
+  iterateTodos(todoArray, projectInstance) {
     todoArray.forEach(todoItem => {
-      createObjects.createTodoObjects(todoItem.title, todoItem.description, todoItem['due-date'], todoItem.priority);
-    })
+      const todoObj = createObjects.createTodoObjects(
+        todoItem.title, 
+        todoItem.description, 
+        todoItem['due-date'], 
+        todoItem.priority
+      );
+      
+      if (projectInstance && typeof projectInstance.pushTodo === 'function') {
+        projectInstance.pushTodo(todoObj);
+      }
+    });
+    console.log(projectInstance);
   }
 };
 
@@ -47,8 +58,8 @@ const DOMRenderer = {
     const projectCard = document.createElement("div");
     projectCard.classList.add(options.className || "project");
     projectCard.id = crypto.randomUUID();
-    
-    AddListeners.addProjectListner(projectCard);
+
+    AddListeners.addProjectListner(projectCard, options.projectInstance);
 
     const text = document.createElement("h3");
     text.textContent = textContent;
@@ -56,21 +67,18 @@ const DOMRenderer = {
     container.prepend(projectCard);
   },
 
-  createProjectDialog() {
+  createProjectDialog(projectInstance) {
     const dialog = document.createElement("dialog");
     dialog.classList.add("dynamic-dialog");
-    dialog.closedBy = "none";
 
     const title = document.createElement("h3");
-    title.textContent = "Add Todo";
+    title.textContent = `Add Todo to ${projectInstance ? projectInstance.name : 'Project'}`;
     title.id = "todo-title";
 
-    //Create a parent form that wraps the entire content
     const form = document.createElement("form");
     form.method = "dialog";
     form.id = "todo-form";
 
-    //Container to hold all dynamically added todo fieldsets
     const todoBlocksContainer = document.createElement("div");
     todoBlocksContainer.id = "todo-blocks-container";
     form.appendChild(todoBlocksContainer);
@@ -89,6 +97,7 @@ const DOMRenderer = {
     addTodo.appendChild(svg);
 
     AddListeners.addTodoListener(addTodo, todoBlocksContainer);
+    buttonContainer.appendChild(addTodo);
 
     buttonContainer.appendChild(addTodo);
 
@@ -96,9 +105,14 @@ const DOMRenderer = {
     submit.id = "todo-submit";
     submit.type = "submit";
     submit.textContent = "Submit";
-    submit.addEventListener("click", () => { handleDialog.closeAndRemove(dialog); DOMHandler.getTodoFormInfo(form); });
+    
+    form.addEventListener("submit", (e) => {
+      e.preventDefault(); 
+      DOMHandler.getTodoFormInfo(form, projectInstance);
+      handleDialog.closeAndRemove(dialog);
+    });
+    
     buttonContainer.appendChild(submit);
-
     form.appendChild(buttonContainer);
     dialog.appendChild(title);
     dialog.appendChild(form);
@@ -106,7 +120,6 @@ const DOMRenderer = {
     document.body.appendChild(dialog);
     dialog.showModal();
 
-    // Automatically add the first todo form block
     DOMRenderer.createTodoField(todoBlocksContainer);
   },
 
@@ -192,9 +205,11 @@ const DOMRenderer = {
 };
 
 const AddListeners = {
-  addProjectListner(element) {
+  addProjectListner(element, projectInstance) {
     if (!element) return new Error("Element not found.");
-    element.addEventListener("click", DOMRenderer.createProjectDialog);
+    element.addEventListener("click", () => {
+      DOMRenderer.createProjectDialog(projectInstance);
+    });
   },
 
   addTodoListener(element, targetContainer) {
@@ -207,9 +222,9 @@ const AddListeners = {
 
 const createObjects = {
   createTodoObjects(title, description, dueDate, priority) {
-    const todo = new Todo(title, description, dueDate, priority);
-  }
-}
+    return new Todo(title, description, dueDate, priority);
+  },
+};
 
 const handleDialog = {
   closeAndRemove(element) {
