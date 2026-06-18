@@ -1,6 +1,7 @@
 import svgString from '../assets/plus-icon.svg';
 import { FormParser } from './formParser.js';
 import { TodoFactory } from './todoFactory.js';
+import { Validator } from './validator.js';
 
 class ProjectCardRenderer {
   static render(containerID, textContent, projectInstance, options = {}) {
@@ -188,10 +189,7 @@ class EventBinder {
     if (!element) throw new Error("Target element missing.");
 
     element.addEventListener("click", () => {
-      if (projectInstance.todos && projectInstance.todos.length > 0) {
-        console.warn("Todos already exist in this project");
-        return;
-      }
+      if (Validator.checkForTodos(projectInstance) === true) { return; }
 
       TodoDialogRenderer.render(projectInstance);
     });
