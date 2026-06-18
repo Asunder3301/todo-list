@@ -18,9 +18,10 @@ form.addEventListener("submit", (event) => {
     
     const name = DOMHandler.getInputValue(form, "project-name");
     const newProject = new Project(name);
-    
-    DOMRenderer.createProjectCard("project-container", name, newProject);
+
     myProjects.push(newProject);
+
+    DOMRenderer.createProjectCard("project-container", name, newProject);
 
     form.reset();
     dialog.close();

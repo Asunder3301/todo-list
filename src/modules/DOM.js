@@ -186,7 +186,13 @@ class TodoDialogRenderer {
 class EventBinder {
   static bindProjectClick(element, projectInstance) {
     if (!element) throw new Error("Target element missing.");
+
     element.addEventListener("click", () => {
+      if (projectInstance.todos && projectInstance.todos.length > 0) {
+        console.warn("Todos already exist in this project");
+        return;
+      }
+
       TodoDialogRenderer.render(projectInstance);
     });
   }
