@@ -197,6 +197,7 @@ class projectContentRenderer {
     header.appendChild(this.#createHeaderLabel("Description"));
     header.appendChild(this.#createHeaderLabel("Due Date"));
     header.appendChild(this.#createHeaderLabel("Priority"));
+    header.appendChild(this.#createHeaderLabel("Delete Todo"));
 
     container.appendChild(header);
 
