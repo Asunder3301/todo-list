@@ -184,6 +184,43 @@ class TodoDialogRenderer {
   }
 }
 
+class projectContentRenderer {
+  static render(projectInstance, containerID) {
+    const container = document.getElementById(containerID);
+    projectInstance.todos.forEach(todo => {
+      container.appendChild(this.#createTodoGroup(todo)); 
+    })
+  }
+
+  static #createTodoGroup(todo) {
+    const group = document.createElement("div");
+    group.classList.add("todo-group");
+
+    const title = document.createElement("h3");
+    title.textContent = todo.title;
+    title.classList.add("todo-title");
+    
+    const description = document.createElement("p");
+    description.textContent = todo.description;
+    description.classList.add("todo-description")
+
+    const dueDate = document.createElement("p");
+    dueDate.textContent = todo.dueDate;
+    dueDate.classList.add("due-date");
+
+    const priority = document.createElement("p");
+    priority.textContent = todo.priority;
+    priority.classList.add("todo-priority");
+
+    group.appendChild(title);
+    group.appendChild(description);
+    group.appendChild(dueDate);
+    group.appendChild(priority);
+
+    return group;
+  }
+}
+
 class contentRemover {
   static removeMainContent(containerID) {
     const container = document.getElementById(containerID);
@@ -198,6 +235,7 @@ class EventBinder {
     element.addEventListener("click", () => {
       if (Validator.checkForTodos(projectInstance) === true) {
         contentRemover.removeMainContent(containerID);
+        projectContentRenderer.render(projectInstance, containerID);
         return; 
       }
 
