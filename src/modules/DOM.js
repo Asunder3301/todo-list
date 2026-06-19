@@ -12,7 +12,7 @@ class ProjectCardRenderer {
     projectCard.classList.add(options.className || "project");
     projectCard.id = crypto.randomUUID();
 
-    EventBinder.bindProjectClick(projectCard, projectInstance);
+    EventBinder.bindProjectClick(projectCard, projectInstance, containerID);
 
     const text = document.createElement("h3");
     text.textContent = textContent;
@@ -184,12 +184,22 @@ class TodoDialogRenderer {
   }
 }
 
+class contentRemover {
+  static removeMainContent(containerID) {
+    const container = document.getElementById(containerID);
+    container.textContent = "";
+  }
+}
+
 class EventBinder {
-  static bindProjectClick(element, projectInstance) {
+  static bindProjectClick(element, projectInstance, containerID) {
     if (!element) throw new Error("Target element missing.");
 
     element.addEventListener("click", () => {
-      if (Validator.checkForTodos(projectInstance) === true) { return; }
+      if (Validator.checkForTodos(projectInstance) === true) {
+        contentRemover.removeMainContent(containerID);
+        return; 
+      }
 
       TodoDialogRenderer.render(projectInstance);
     });
