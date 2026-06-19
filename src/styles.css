@@ -5,7 +5,7 @@
     --secondary-text: #b3b3b3;
 }
 
-h1, h2, h3, p, input, textarea, select #project-form, #submit-btn, #todo-form, #todo-submit { margin: 0; color: var(--main-text); }
+h1, h2, h3, h4, p, input, textarea, select #project-form, #submit-btn, #todo-form, #todo-submit { margin: 0; color: var(--main-text); }
 button { border: none; padding: 0; }
 
 body {
@@ -41,7 +41,7 @@ header {
     gap: 0.75rem;
 }
 
-.project, .todo-group { border-radius: 10px; }
+#todo-header, .project, .todo-group { border-radius: 10px; }
 
 .project {
     display: flex;
@@ -54,7 +54,7 @@ header {
     background-color: var(--secondary-color);
 }
 
-.todo-group {
+#todo-header,.todo-group {
     display: flex;
     justify-content: space-evenly;
     align-items: center;

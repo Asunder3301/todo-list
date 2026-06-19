@@ -188,17 +188,34 @@ class projectContentRenderer {
   static render(projectInstance, containerID) {
     const container = document.getElementById(containerID);
     container.id = "todos-container";
-    
+
+    const header = document.createElement("div");
+    header.id = "todo-header"
+
+    header.appendChild(this.#createHeaderLabel("Title"));
+    header.appendChild(this.#createHeaderLabel("Description"));
+    header.appendChild(this.#createHeaderLabel("Due Date"));
+    header.appendChild(this.#createHeaderLabel("Priority"));
+
+    container.appendChild(header);
+
     projectInstance.todos.forEach(todo => {
       container.appendChild(this.#createTodoGroup(todo)); 
     })
+  }
+
+  static #createHeaderLabel(text) {
+    const label = document.createElement("h3");
+    label.textContent = text;
+
+    return label;
   }
 
   static #createTodoGroup(todo) {
     const group = document.createElement("div");
     group.classList.add("todo-group");
 
-    const title = document.createElement("h3");
+    const title = document.createElement("h4");
     title.textContent = todo.title;
     title.classList.add("todo-title");
     
