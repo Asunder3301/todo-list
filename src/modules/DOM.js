@@ -1,4 +1,5 @@
 import svgString from '../assets/plus-icon.svg';
+import trashIcon from '../assets/recycle-bin-svgrepo-com.svg';
 import { FormParser } from './formParser.js';
 import { TodoFactory } from './todoFactory.js';
 import { Validator } from './validator.js';
@@ -220,6 +221,8 @@ class projectContentRenderer {
     group.appendChild(this.#createTodoElement("p", "due-date", todo.dueDate));
     group.appendChild(this.#createTodoElement("p", "todo-priority", todo.priority));
 
+    group.appendChild(this.#createDeleteButton());
+
     return group;
   }
 
@@ -229,6 +232,20 @@ class projectContentRenderer {
     todoElement.classList.add(className);
 
     return todoElement;
+  }
+
+  static #createDeleteButton() {
+    const btn = document.createElement("button");
+    btn.classList.add("remove-button");
+    btn.type = "button";
+
+    const svg = document.createElement("img");
+    svg.src = trashIcon;
+    svg.height = 20;
+    svg.width = 20;
+    btn.appendChild(svg);
+
+    return btn;
   }
 }
 
