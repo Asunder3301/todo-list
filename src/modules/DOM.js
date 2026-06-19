@@ -215,28 +215,20 @@ class projectContentRenderer {
     const group = document.createElement("div");
     group.classList.add("todo-group");
 
-    const title = document.createElement("h4");
-    title.textContent = todo.title;
-    title.classList.add("todo-title");
-    
-    const description = document.createElement("p");
-    description.textContent = todo.description;
-    description.classList.add("todo-description")
-
-    const dueDate = document.createElement("p");
-    dueDate.textContent = todo.dueDate;
-    dueDate.classList.add("due-date");
-
-    const priority = document.createElement("p");
-    priority.textContent = todo.priority;
-    priority.classList.add("todo-priority");
-
-    group.appendChild(title);
-    group.appendChild(description);
-    group.appendChild(dueDate);
-    group.appendChild(priority);
+    group.appendChild(this.#createTodoElement("h4", "todo-title", todo.title));
+    group.appendChild(this.#createTodoElement("p", "todo-description", todo.description));
+    group.appendChild(this.#createTodoElement("p", "due-date", todo.dueDate));
+    group.appendChild(this.#createTodoElement("p", "todo-priority", todo.priority));
 
     return group;
+  }
+
+  static #createTodoElement(element, className, todoProperty) {
+    const todoElement = document.createElement(element);
+    todoElement.textContent = todoProperty;
+    todoElement.classList.add(className);
+
+    return todoElement;
   }
 }
 
