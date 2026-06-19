@@ -6,6 +6,7 @@
 }
 
 h1, h2, h3, h4, p, input, textarea, select #project-form, #submit-btn, #todo-form, #todo-submit { margin: 0; color: var(--main-text); }
+img { align-self: center; }
 button { border: none; padding: 0; }
 
 body {
@@ -78,6 +79,15 @@ h3 { font-size: clamp(1rem, 2.5vw, 1.5rem); }
     height: 35px;
     width: 35px;  
 }
+
+.remove-button {
+    border-radius: 30px;
+    height: 45px;
+    width: 45px;
+    background-color: rgb(255, 0, 0);
+}
+
+.remove-button:active{ background-color: rgb(153, 29, 29); }
 
 dialog { border-radius: 0.5rem; background-color: var(--main-color); }
 ::backdrop { background-color: rgba(0, 0, 0, 0.75); }

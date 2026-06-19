@@ -241,8 +241,8 @@ class projectContentRenderer {
 
     const svg = document.createElement("img");
     svg.src = trashIcon;
-    svg.height = 20;
-    svg.width = 20;
+    svg.height = 30;
+    svg.width = 30;
     btn.appendChild(svg);
 
     return btn;
