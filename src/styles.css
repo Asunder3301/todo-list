@@ -21,7 +21,7 @@ header {
     background-color: var(--secondary-color);
 }
 
-main {
+#project-container {
     padding: 2rem;
     display: grid;
     grid-template-rows: min-content;

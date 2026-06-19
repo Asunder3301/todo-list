@@ -187,6 +187,8 @@ class TodoDialogRenderer {
 class projectContentRenderer {
   static render(projectInstance, containerID) {
     const container = document.getElementById(containerID);
+    container.id = "todos-container";
+    
     projectInstance.todos.forEach(todo => {
       container.appendChild(this.#createTodoGroup(todo)); 
     })
