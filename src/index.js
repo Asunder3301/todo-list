@@ -5,7 +5,14 @@ import { Project } from "./modules/project.js";
 
 const myProjects = [];
 
-// Initialize default data structure configuration
+const viewProjects = document.getElementById("view-projects");
+viewProjects.addEventListener("click", () => {
+    const bodyChildren = document.body.children;
+    const main = bodyChildren[1];
+    DOMRenderer.rerenderProjects(main, "project-container", "todos-container", myProjects);
+})
+
+// Initialize default project
 const defaultProject = new Project("Default");
 DOMRenderer.createProjectCard("project-container", "Default", defaultProject);
 myProjects.push(defaultProject);
