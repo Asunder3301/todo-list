@@ -1,7 +1,6 @@
 import svgString from '../assets/plus-icon.svg';
 import trashIcon from '../assets/recycle-bin-svgrepo-com.svg';
 import { FormParser } from './formParser.js';
-// import { Project } from "./project.js";
 import { TodoFactory } from './todoFactory.js';
 import { Validator } from './validator.js';
 
@@ -20,6 +19,20 @@ class ProjectCardRenderer {
     text.textContent = textContent;
     projectCard.appendChild(text);
     container.prepend(projectCard);
+  }
+
+  static rerender(container, containerID, targetContainer, array) {
+    if(container.id === containerID) {
+      console.log("Cannot switch to the project page.");
+      return;
+    }
+
+    ContentRemover.removeMainContent(targetContainer);
+    container.id = containerID;
+
+    array.forEach(item => {
+      this.render(containerID, item.name, item);
+    })
   }
 }
 
@@ -300,7 +313,8 @@ const DOMHandler = {
 const DOMRenderer = {
   createProjectCard: ProjectCardRenderer.render.bind(ProjectCardRenderer),
   createProjectDialog: TodoDialogRenderer.render.bind(TodoDialogRenderer),
-  createTodoField: TodoDialogRenderer.renderTodoFieldset.bind(TodoDialogRenderer)
+  // createTodoField: TodoDialogRenderer.renderTodoFieldset.bind(TodoDialogRenderer)
+  rerenderProjects: ProjectCardRenderer.rerender.bind(ProjectCardRenderer),
 };
 
 export { DOMHandler, DOMRenderer };
