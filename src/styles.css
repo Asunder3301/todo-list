@@ -6,6 +6,9 @@
 }
 
 h1, h2, h3, h4, p, input, textarea, select #project-form, #submit-btn, #todo-form, #todo-submit { margin: 0; color: var(--main-text); }
+h2 { text-decoration: underline; text-underline-offset: 0.22rem; }
+h2:active { color: rgb(161, 161, 161); }
+h2:hover { cursor: pointer; }
 img { align-self: center; }
 button { border: none; padding: 0; }
 
