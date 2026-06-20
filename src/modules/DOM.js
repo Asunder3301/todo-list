@@ -1,6 +1,7 @@
 import svgString from '../assets/plus-icon.svg';
 import trashIcon from '../assets/recycle-bin-svgrepo-com.svg';
 import { FormParser } from './formParser.js';
+// import { Project } from "./project.js";
 import { TodoFactory } from './todoFactory.js';
 import { Validator } from './validator.js';
 
@@ -185,7 +186,7 @@ class TodoDialogRenderer {
   }
 }
 
-class projectContentRenderer {
+class ProjectContentRenderer {
   static render(projectInstance, containerID) {
     const container = document.getElementById(containerID);
     container.id = "todos-container";
@@ -202,7 +203,7 @@ class projectContentRenderer {
     container.appendChild(header);
 
     projectInstance.todos.forEach(todo => {
-      container.appendChild(this.#createTodoGroup(todo)); 
+      container.appendChild(this.#createTodoGroup(todo, projectInstance)); 
     })
   }
 
@@ -213,7 +214,7 @@ class projectContentRenderer {
     return label;
   }
 
-  static #createTodoGroup(todo) {
+  static #createTodoGroup(todo, projectInstance) {
     const group = document.createElement("div");
     group.classList.add("todo-group");
 
@@ -222,7 +223,7 @@ class projectContentRenderer {
     group.appendChild(this.#createTodoElement("p", "due-date", todo.dueDate));
     group.appendChild(this.#createTodoElement("p", "todo-priority", todo.priority));
 
-    group.appendChild(this.#createDeleteButton());
+    group.appendChild(this.#createDeleteButton(todo, group, projectInstance));
 
     return group;
   }
@@ -235,7 +236,7 @@ class projectContentRenderer {
     return todoElement;
   }
 
-  static #createDeleteButton() {
+  static #createDeleteButton(todo, group, projectInstance) {
     const btn = document.createElement("button");
     btn.classList.add("remove-button");
     btn.type = "button";
@@ -246,14 +247,20 @@ class projectContentRenderer {
     svg.width = 30;
     btn.appendChild(svg);
 
+    EventBinder.bindRemoveButtonClick(btn, todo, group, projectInstance);
+
     return btn;
   }
 }
 
-class contentRemover {
+class ContentRemover {
   static removeMainContent(containerID) {
     const container = document.getElementById(containerID);
     container.textContent = "";
+  }
+
+  static removeTodoGroup(group) {
+    if (group) { group.remove(); }
   }
 }
 
@@ -263,8 +270,8 @@ class EventBinder {
 
     element.addEventListener("click", () => {
       if (Validator.checkForTodos(projectInstance) === true) {
-        contentRemover.removeMainContent(containerID);
-        projectContentRenderer.render(projectInstance, containerID);
+        ContentRemover.removeMainContent(containerID);
+        ProjectContentRenderer.render(projectInstance, containerID);
         return; 
       }
 
@@ -275,6 +282,14 @@ class EventBinder {
   static bindAddBlockClick(element, targetContainer, actionCallback) {
     if (!element) throw new Error("Target element missing.");
     element.addEventListener("click", actionCallback);
+  }
+
+  static bindRemoveButtonClick(element, todoInstance, group, projectInstance) {
+    if(!element) throw new Error("Target element is missing");
+    element.addEventListener("click", () => {
+      projectInstance.removeTodo(todoInstance);
+      ContentRemover.removeTodoGroup(group);
+    });
   }
 }
 
