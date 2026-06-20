@@ -332,8 +332,6 @@ const DOMHandler = {
 
 const DOMRenderer = {
   createProjectCard: ProjectCardRenderer.render.bind(ProjectCardRenderer),
-  // createProjectDialog: TodoDialogRenderer.render.bind(TodoDialogRenderer),
-  // createTodoField: TodoDialogRenderer.renderTodoFieldset.bind(TodoDialogRenderer)
   rerenderProjects: ProjectCardRenderer.rerender.bind(ProjectCardRenderer),
 };
 
