@@ -29,6 +29,7 @@ class ProjectCardRenderer {
 
     ContentRemover.removeMainContent(targetContainer);
     container.id = containerID;
+    container.appendChild(ProjectButtonRenderer.render());
 
     array.forEach(item => {
       this.render(containerID, item.name, item);
@@ -266,6 +267,25 @@ class ProjectContentRenderer {
   }
 }
 
+class ProjectButtonRenderer {
+    static render() {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "add-btn";
+    btn.command = "show-modal";
+    btn.setAttribute("commandfor", "create-project");
+
+    const svg = document.createElement("img");
+    svg.src = svgString;
+    svg.width = 30;
+    svg.height = 30;
+
+    btn.appendChild(svg);
+    
+    return btn;
+  }
+}
+
 class ContentRemover {
   static removeMainContent(containerID) {
     const container = document.getElementById(containerID);
@@ -312,7 +332,7 @@ const DOMHandler = {
 
 const DOMRenderer = {
   createProjectCard: ProjectCardRenderer.render.bind(ProjectCardRenderer),
-  createProjectDialog: TodoDialogRenderer.render.bind(TodoDialogRenderer),
+  // createProjectDialog: TodoDialogRenderer.render.bind(TodoDialogRenderer),
   // createTodoField: TodoDialogRenderer.renderTodoFieldset.bind(TodoDialogRenderer)
   rerenderProjects: ProjectCardRenderer.rerender.bind(ProjectCardRenderer),
 };
