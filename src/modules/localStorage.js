@@ -1,4 +1,24 @@
+import { JSONHandler } from "./handleJSON.js";
+
 export class LocalStorage {
+    static addToLocal(key, value) {
+        if (!this.#storageAvailable("localStorage")) {
+            console.log("Storage not found");
+            return;
+        }
+
+        localStorage.setItem(key, JSONHandler.toJSON(value));
+    }
+
+    static getFromLocal(key) {
+        if(!this.#storageAvailable("localStorage")) {
+            console.log("Storage not found");
+            return;
+        }
+
+        return JSONHandler.toArray(localStorage.getItem(key));
+    }
+
     static #storageAvailable(type) {
     let storage;
     try {
