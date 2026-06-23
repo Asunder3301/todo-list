@@ -42,6 +42,10 @@ viewProjects.addEventListener("click", () => {
     DOMRenderer.rerenderProjects(main, "project-container", "todos-container", myProjects);
 })
 
+window.addEventListener("projectDataUpdated", () => {
+    LocalStorage.addToLocal("myProjects", myProjects);
+})
+
 const form = document.getElementById("project-form");
 const dialog = document.getElementById("create-project");
 

@@ -107,6 +107,13 @@ class TodoDialogRenderer {
     });
 
     console.log(projectInstance);
+
+    const updateEvent = new CustomEvent("projectDataUpdated", {
+      bubbles: true,
+      detail: { project: projectInstance }
+    });
+    
+    form.dispatchEvent(updateEvent);
   }
 
   static #createAddButton(targetContainer) {
@@ -321,6 +328,13 @@ class EventBinder {
     if(!element) throw new Error("Target element is missing");
     element.addEventListener("click", () => {
       projectInstance.removeTodo(todoInstance);
+
+      const updateEvent = new CustomEvent("projectDataUpdated", {
+        bubbles: true,
+        detail: { project: projectInstance }
+      });
+      element.dispatchEvent(updateEvent);
+
       ContentRemover.removeTodoGroup(group);
     });
   }
